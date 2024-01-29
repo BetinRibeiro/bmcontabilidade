@@ -1,0 +1,62 @@
+# -*- coding: utf-8 -*-
+def obter_ultimos_registros(id_empresa, tamanho_lista, index):
+    totais_entrada_liquidados = []
+    totais_saida_liquidados = []
+    saldo = []
+
+    # Iterando sobre os últimos meses, de acordo com o tamanho da lista
+    for i in range(tamanho_lista):
+
+        # Calculando o total de registros de entrada liquidados
+        total_entrada = calcular_total_registros_intervalo(id_empresa, 'Entrada', True, index)
+        totais_entrada_liquidados.append(round(total_entrada, 2))  # Arredonda para 2 casas decimais
+
+        # Calculando o total de registros de saída liquidados
+        total_saida = calcular_total_registros_intervalo(id_empresa, 'Saida', True, index)
+        totais_saida_liquidados.append(round(total_saida, 2))  # Arredonda para 2 casas decimais
+
+        saldo.append(total_entrada-total_saida)
+        # Obtendo o índice negativo para retroceder no tempo
+        index -= 1
+
+    # Invertendo a ordem das listas
+    totais_entrada_liquidados.reverse()
+    totais_saida_liquidados.reverse()
+    saldo.reverse()
+    return totais_entrada_liquidados, totais_saida_liquidados, saldo
+
+
+from datetime import datetime, timedelta
+
+def obter_datas_anteriores(tamanho_lista, index):
+    # Obtendo a data atual (mês e ano)
+    if index==0:
+        data_atual = datetime.now()
+    else:
+        data_atual, outra = primeiro_ultimo_dia_do_mes(index)
+    datas = []
+
+    for i in range(tamanho_lista):
+        # Adicionando a data atual à lista
+        datas.append(float(data_atual.strftime("%m.%Y")))
+
+        # Retrocedendo para o mês anterior
+        data_atual -= timedelta(days=data_atual.day)  # Move para o último dia do mês
+        data_atual -= timedelta(days=1)  # Move para o dia anterior (último dia do mês anterior)
+
+    datas.reverse()
+    return datas
+
+
+def analisar_valores(lista):
+    # Inicializando as variáveis
+    total = sum(lista)
+    valores_positivos = [x for x in lista if x > 0]
+    
+    # Verificando se há valores positivos para calcular a média
+    media_positivos = sum(valores_positivos) / len(valores_positivos) if valores_positivos else 0
+    
+    maior_valor = max(lista)
+    menor_valor = min(lista)
+    
+    return total, media_positivos, maior_valor, menor_valor

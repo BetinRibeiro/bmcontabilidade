@@ -1,0 +1,81 @@
+# -*- coding: utf-8 -*-
+
+from datetime import timedelta
+import random
+
+def criar_registros_aleatorios(numero_registros):
+    # Criar 'numero_registros' de registros financeiros aleatórios
+    for i in range(numero_registros):
+        # A empresa é definida como 1 para todos os registros
+        empresa_id = 1
+
+        # A classificação é aleatória, alternando entre 1 e 2
+        classificacao_id = 1 if i % 2 == 0 else 2
+
+        # A descrição é definida como 'gerado aleatorio {i}'
+        descricao = f"gerado aleatorio {i}"
+
+        # Definir a data de vencimento começando há 12 meses atrás e pulando de 2 em 2 dias
+        data_vencimento = request.now - timedelta(days=365) + timedelta(days=2 * i)
+
+        # Se a data de vencimento for maior que hoje, aleatoriamente define alguns registros como 'liquidado = False'
+        if data_vencimento > datetime.now() and random.choice([True, False]):
+            liquidado = False
+        else:
+            liquidado = True
+
+        # O valor é um número aleatório entre 120 e 500
+        valor = round(random.randint(120, 500), 2)
+
+        # Criar o registro financeiro no banco de dados
+        db.registro_financeiro.insert(
+            empresa=empresa_id,
+            classificacao=classificacao_id,
+            descricao=descricao,
+            data_vencimento=data_vencimento,
+            valor=valor,
+            liquidado=liquidado
+        )
+
+    return f"{numero_registros} registros financeiros foram criados com sucesso."
+
+import random
+import string
+
+def criar_associados_aleatorios(id_empresa):
+    # Verifica se a empresa possui algum associado
+    associados_existentes = db(db.associado.empresa == id_empresa).count()
+    delegacia = db(db.delegacia.empresa == id_empresa).select(db.delegacia.id, limitby=(0, 1)).first()
+    
+
+    # Se não houver associados, cria aleatoriamente 100 associados
+    if associados_existentes == 0:
+        nomes = [gerar_nome_aleatorio() for _ in range(100)]
+        telefones = [gerar_telefone_aleatorio() for _ in range(100)]
+        cpfs = [gerar_cpf_aleatorio() for _ in range(100)]
+
+        for i in range(100):
+            db.associado.insert(
+                empresa=id_empresa,
+                delegacia=delegacia.id,
+                nome=nomes[i],
+                telefone=telefones[i],
+                email='',
+                cpf=cpfs[i],
+                rg='',
+                endereco='',
+                bairro='',
+                complemento='',
+                cidade='',
+                ativo=True
+            )
+
+def gerar_nome_aleatorio():
+    letras = string.ascii_uppercase
+    return ''.join(random.choice(letras) for _ in range(8))
+
+def gerar_telefone_aleatorio():
+    return ''.join(random.choice(string.digits) for _ in range(9))
+
+def gerar_cpf_aleatorio():
+    return ''.join(random.choice(string.digits) for _ in range(11))

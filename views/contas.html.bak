@@ -1,0 +1,140 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="col-md-6 col-12">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 col-6">
+
+                    </div>
+                    <div class="col-md-6 col-6">
+
+                    </div>
+                </div>
+                </div>
+            <div class="col-md-6 d-flex justify-content-between align-items-center">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-12 d-flex justify-content-between align-items-center" id="noprint">
+
+        {{if False:}}
+            {{if paginas>0:}}
+            {{pass}}
+        {{pass}}
+    </div>
+</div>
+{{if True:}}
+<div class="row">
+    <div class="col-md-6">
+<!--         <h5 class="text-left my-2">Pagina {{=pagina}}/{{=paginas}}</h5> -->
+    </div>
+    <div class="col-md-6" id="noprint">
+
+    </div>
+</div>
+
+<!-- <div class="container-fluid pt-1 px-4"> -->
+    <div class="bg-light text-center rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            
+            <h6 class="mb-0">Lista de {{block content}}{{end}} {{=pagina}}/{{=paginas}}</h6>
+            <div class="form-group row m-1">
+<!--                 <input type="text" class="form-control col-9 col-form-label ml-2" name="busca" placeholder="Pesquisar" id="input"/> -->
+<!--                 <div class="col-2">
+                    <button class="btn btn-primary botao " id="bt" type="button">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div> -->
+            </div>
+        </div> 
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            
+        <h5 class="text-left my-2">Pagina {{=pagina}}/{{=paginas}}</h5>
+    {{if False:}}
+            <a class="btn btn-success btn-sm" href="{{=URL('cadastrar')}}" >
+                <i class="fa fa-fw fa-plus"></i> Cadastrar
+            </a>
+            {{pass}}
+            {{if paginas>1:}}
+            {{include 'paginacao.html'}}
+            {{pass}}
+        </div> 
+        <div class="table-responsive">
+            <table class="table text-start align-middle table-bordered table-hover mb-0">
+                <thead>
+                    <tr class="text-dark">
+<!--                         <th class="text-left" id="noprint" scope="col">Alterar</th> -->
+                        <th class="text-left" scope="col">Data</th>
+                        <th class="text-left" scope="col">Classe</th>
+                        <th class="text-left" scope="col">Descrição</th>
+                        <th class="text-left" scope="col">Valor</th>
+                        <th class="text-left" scope="col">Status</th>
+                        <th id="noprint"  class="text-right">Liquidar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{for row in rows:}}
+                    {{if (row.liquidado):}}
+                        <tr>
+                            {{else:}}
+                        <tr class="text-danger">
+                            {{pass}}
+<!--                             <td class="text-left" id="noprint" scope="row">
+                                <a class="btn btn-warning btn-sm" href="{{=URL('alterar', args=[row.id,pagina])}}" >
+                                    <i class="fa fa-fw fa-pencil-square "></i> 
+                                    Alterar 
+                                </a>
+                               
+                            </td> -->
+                            <td class="text-left">{{=row.data_vencimento.strftime('%d/%m/%Y')}}</td>
+                            <td class="text-left">{{=row.classificacao.descricao}}</td>
+                            <td class="text-left">{{=row.descricao}}</td>
+                            <td class="text-left">{{=dinheiro(row.valor)}}</td>
+                            <td class="text-left">{{if (row.liquidado):}}Quitado{{else:}}Aguardando{{pass}}</td>
+                            <td id="noprint" class="text-right">
+                                {{if row.liquidado:}}
+                                <a class="btn btn-info btn-sm " href="{{=URL('liquidar', args=row.id)}}" >
+                                    <i class="fa fa-fw fa-folder-open"></i> 
+                                    Desfazer
+                                </a>
+                                {{else:}}
+                                <a class="btn btn-danger btn-sm " href="{{=URL('liquidar', args=row.id)}}" >
+                                    <i class="fa fa-fw fa-folder-open"></i> 
+                                    Liquidar  
+                                </a>
+                                {{pass}}
+                            </td>
+                        </tr>
+                    {{pass}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+<!-- </div> -->
+{{if len(rows)>15:}}
+<div class="row">
+    <div class="col-md-6">
+        <h5 class="text-left my-2">Pagina {{=pagina}}/{{=paginas}}</h5>
+    </div>
+    <div class="col-md-6"  id="noprint">
+        {{if paginas>1:}}
+            {{include 'paginacao.html'}}
+        {{pass}}
+    </div>
+</div>
+{{pass}}
+{{pass}}
+
+<script>
+    // Adicione o atributo "autofocus" ao campo de entrada
+    document.querySelector('#input').focus();
+    var inputElement = document.querySelector('input[name=busca]');
+
+    $(document).keypress(function(e) {
+    if(e.which == 13) {
+     var busca= inputElement.value;
+        window.location.href = "{{=URL(args=1)}}/"+busca
+    }
+});
+</script>

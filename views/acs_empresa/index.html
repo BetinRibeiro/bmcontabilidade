@@ -1,0 +1,314 @@
+{{extend 'layout.html'}}
+
+{{dias = dia_do_mes(posicao)}}
+{{lista_entrada, lista_saida, lista_saldo=obter_ultimos_registros(empresa.id, 12, posicao)}}
+
+{{total, media_positivos, maior_valor, menor_valor = analisar_valores(lista_entrada)}}
+{{meses = obter_datas_anteriores(12,posicao)}}
+
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="py-3 text-center">
+    <div class="container">
+            <div class="text-right  d-flex justify-content-between align-items-center">
+<!--                 <span class="badge badge-primary " > -->
+                <h5 class="d-flex">
+                    
+                  <a class="text-dark" href="{{=URL('alterar')}}">
+                      <i class="fa fa-pencil-square-o" aria-hidden="true" id="noprint"></i>
+                      {{=empresa.nome}}</a>
+                </h5>
+<!--                 </span> -->
+                <div class=" d-flex justify-content-between align-items-center">
+                    <a class="btn btn-link" style="color:#55acee" href="{{=URL(args=posicao-1)}}" id="noprint">
+                        <i class="fa fa-fw fa-1x py-1 fa-angle-left" ></i>
+                    </a>
+<!--                     <p> -->
+                        {{=formatar_periodo_mes(posicao)}}
+<!--                     </p> -->
+                    <a class="btn btn-link" style="color:#55acee" href="{{=URL(args=posicao+1)}}" id="noprint">
+                        <i class="fa fa-fw fa-1x py-1 fa-angle-right"></i></a>
+                </div>
+            </div>
+            <hr>
+        {{if empresa.tipo:}}
+        {{if 'SINDICATO' in empresa.tipo:}}
+        <div class="row" id="noprint">
+        <div class="col-sm-3 col-md-3">
+            <a class="btn btn-primary btn-block my-1" href="{{=URL('acs_associado','index')}}">
+                Associados
+            </a></div>
+        <div class="col-md-3 col-sm-3">
+            <a class="btn btn-primary btn-block my-1" href="{{=URL('acs_delegacia','index')}}">
+                Delegacias
+            </a></div>
+        <div class="col-md-3 col-sm-3">
+            <a class="btn btn-primary btn-block my-1 disabled" href="#">
+                Aguardando
+            </a></div>
+        <div class="col-md-3 col-sm-3">
+            <a class="btn btn-primary btn-block my-1 disabled" href="#">
+                Aguardando
+            </a></div>
+      </div>
+        {{pass}}
+        {{pass}}
+            <div class="row g-4">
+                <div class="col-sm-3 col-xl-3">
+                    <div class="bg-light border rounded d-flex align-items-center justify-content-between p-4 m-1">
+                        <i class="fa fa-pie-chart fa-3x text-primary"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">
+                                <a href="{{=URL('acs_relatorio','receber')}}">
+                                    À Receber
+                                </a>
+                            </p>
+                            <hr>
+                            <h6 class="mb-0">{{=dinheiro(calcular_total_registros(empresa.id, "Entrada", False))}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xl-3">
+                    <div class="bg-light border rounded d-flex align-items-center justify-content-between p-4 m-1">
+                        <i class="fa fa-bar-chart fa-3x text-primary"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">
+                                <a href="{{=URL('acs_relatorio','pagar')}}">
+                                    À Pagar
+                                </a>
+                            <p>
+                            <hr>
+                            <h6 class="mb-0">{{=dinheiro(calcular_total_registros(empresa.id, "Saida", False))}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xl-3">
+                    <div class="bg-light border rounded d-flex align-items-center justify-content-between p-4 m-1">
+                        <i class="fa fa-line-chart fa-3x text-primary"></i>
+                        <div class="ms-3">
+                            <a href="{{=URL('acs_relatorio','mes', args='entrada')}}">
+                                <p class="mb-2">Entradas/Mês</p>
+                            </a>
+                            <hr>
+                            {{recebimentos_mes = calcular_total_registros_intervalo(empresa.id, "Entrada", True, posicao)}}
+                            <h6 class="mb-0">{{=dinheiro(recebimentos_mes)}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xl-3">
+                    <div class="bg-light border rounded d-flex align-items-center justify-content-between p-4 m-1">
+                        <i class="fa fa-area-chart fa-3x text-primary"></i>
+                        <div class="ms-3">
+                            <a href="{{=URL('acs_relatorio','mes', args='saida')}}">
+                                <p class="mb-2">Pagamentos/Mês</p>
+                            </a>
+                            <hr>
+                            {{pagamentos_mes = calcular_total_registros_intervalo(empresa.id, "Saida", True, posicao)}}
+                            <h6 class="mb-0">{{=dinheiro(pagamentos_mes)}}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="row py-3">
+                <div class="col-sm-6 col-xl-6">
+                    <div class="bg-light border rounded d-flex align-items-center justify-content-between p-4 m-1">
+                        <i class="fa fa-line-chart fa-3x text-primary"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">Entradas Média Dia</p>
+                            <hr>
+                            {{media=0}}
+                            {{if recebimentos_mes>0:}}
+                            {{media =recebimentos_mes/dias }}
+                            {{pass}}
+                            <h6 class="mb-0">{{=dinheiro(media)}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-6">
+                    <div class="bg-light border rounded d-flex align-items-center justify-content-between p-4 m-1">
+                        <i class="fa fa-line-chart fa-3x text-primary"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">Saídas Média Dia</p>
+                            <hr>
+                            {{media=0}}
+                            {{if pagamentos_mes>0:}}
+                            {{media =pagamentos_mes/dias }}
+                            {{pass}}
+                            <h6 class="mb-0">{{=dinheiro(media)}}</h6>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+        <div class="row py-3" >
+            <div class="col-sm-6">
+                    <div class="bg-light border rounded  p-4 m-1">
+            <h5 class="d-flex justify-content-between mb-3"> <span class="text-muted">Grafico Entradas e Saidas</span> </h5>
+                <canvas id="meuGrafico" width="400" height="250"></canvas>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                    <div class="bg-light border rounded  p-4 m-1">
+            <h5 class="d-flex justify-content-between mb-3"> <span class="text-muted">Variação de Saldo Caixa</span> </h5>
+                <canvas id="graficoSaldo" width="400" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="row py-3">
+            <div class="col-sm-6">
+                <div class="bg-light border rounded  p-4 m-1">
+                    <h5 class="d-flex justify-content-between mb-3"> <span class="text-muted">Informções de Entradas Mensais</span> </h5>
+                    <ul class="list-group">
+                      <li class="list-group-item d-flex justify-content-between">
+                        <div>
+                          <h6 class="my-0"><b>Total</b></h6>
+        <!--                     <small class="text-muted">Brief description</small> -->
+                        </div>
+                          <span class="text-muted">{{=dinheiro(total)}}</span>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between">
+                        <div>
+                          <h6 class="my-0"><b>Maior Valor</b></h6>
+        <!--                     <small class="text-muted">Brief description</small> -->
+                        </div>
+                          <span class="text-muted">{{=dinheiro(maior_valor)}}</span>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between">
+                        <div>
+                          <h6 class="my-0"><b>Menor Valor</b></h6>
+        <!--                     <small class="text-muted">Brief description</small> -->
+                        </div>
+                          <span class="text-muted">{{=dinheiro(menor_valor)}}</span>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between bg-light">
+                        <div class="text-success">
+                          <h6 class="my-0"><b>Valor Médio</b></h6>
+        <!--                     <small>EXAMPLECODE</small> -->
+                        </div>
+                          <span class="text-muted">{{=dinheiro(media_positivos)}}</span>
+                      </li>
+        <!--               <li class="list-group-item d-flex justify-content-between"> <span>Total (USD)</span> <b>$20</b> </li> -->
+                    </ul>
+               </div>
+        </div>
+
+{{total, media_positivos, maior_valor, menor_valor = analisar_valores(lista_saida)}}
+        <div class="col-sm-6">
+            <div class="bg-light border rounded  p-4 m-1">
+                <h5 class="d-flex justify-content-between mb-3"> <span class="text-muted">Informções de Saidas Mensais</span> </h5>
+                <ul class="list-group">
+                  <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                      <h6 class="my-0"><b>Total</b></h6>
+    <!--                     <small class="text-muted">Brief description</small> -->
+                    </div>
+                      <span class="text-muted">{{=dinheiro(total)}}</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                      <h6 class="my-0"><b>Maior Valor</b></h6>
+    <!--                     <small class="text-muted">Brief description</small> -->
+                    </div>
+                      <span class="text-muted">{{=dinheiro(maior_valor)}}</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                      <h6 class="my-0"><b>Menor Valor</b></h6>
+    <!--                     <small class="text-muted">Brief description</small> -->
+                    </div>
+                      <span class="text-muted">{{=dinheiro(menor_valor)}}</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between bg-light">
+                    <div class="text-danger">
+                      <h6 class="my-0"><b>Valor Médio</b></h6>
+    <!--                     <small>EXAMPLECODE</small> -->
+                    </div>
+                      <span class="text-muted">{{=dinheiro(media_positivos)}}</span>
+                  </li>
+    <!--               <li class="list-group-item d-flex justify-content-between"> <span>Total (USD)</span> <b>$20</b> </li> -->
+                </ul>
+            </div>
+          </div>
+      </div>
+    </div>
+</div>
+
+    <script>
+        // Função que gera o gráfico
+        function gerarGrafico() {
+            // Obtém o contexto do canvas
+            var ctx = document.getElementById('meuGrafico').getContext('2d');
+
+            // Dados para o gráfico
+            var dados = {
+                labels: {{=meses}},
+                datasets: [{
+                    label: 'Entradas',
+                    data: {{=lista_entrada}},
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }, {
+                    label: 'Saídas',
+                    data: {{=lista_saida}},
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            };
+
+            // Configurações do gráfico
+            var config = {
+                type: 'bar',
+                data: dados,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+
+            // Criação do gráfico
+            var meuGrafico = new Chart(ctx, config);
+        }
+
+        // Chama a função para gerar o gráfico ao carregar a página
+        window.onload = function() {
+            gerarGrafico();
+        };
+
+
+
+
+
+var ctx = document.getElementById('graficoSaldo');
+var dados = {{=lista_saldo}};
+var titulos = {{=meses}};
+
+// Defina uma matriz de cores com base nos valores de dados
+var cores = dados.map(function (valor) {
+    return valor < 0 ? 'rgba(255, 99, 132, 0.2)' : 'rgba(75, 192, 192, 0.2)';
+});
+
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: titulos,
+        datasets: [{
+            axis: 'y',
+            label: "Saldos",
+            data: dados,
+            fill: false,
+            backgroundColor: cores, // Use as cores definidas
+            borderColor: 'rgb(169, 169, 169)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+    },
+});
+
+    </script>

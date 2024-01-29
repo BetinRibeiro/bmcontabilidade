@@ -1,0 +1,21 @@
+<ul class="pagination m-2 justify-content-end">
+    {{ if pagina != 1: }}
+    <li class="page-item">
+        <a class="page-link" href="{{ =URL(args=[tipo,1])}}">
+            <i class="fa fa-angle-double-left"></i>
+        </a>
+    </li>
+    {{ pass }}
+    {{ for p in range(max(pagina - 2, 1), min(paginas + 1, pagina + 3)) :}}
+    <li class="page-item {{ 'active' if p == pagina else '' }}">
+        <a class="page-link" href="{{ =URL(args=[tipo,p]) }}">{{=p}}</a>
+    </li>
+    {{ pass }}
+    {{ if pagina != paginas: }}
+    <li class="page-item">
+        <a class="page-link" href="{{ =URL(args=[tipo,paginas])}}">
+            <i class="fa fa-angle-double-right"></i>
+        </a>
+    </li>
+    {{ pass }}
+</ul>

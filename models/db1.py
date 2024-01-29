@@ -1,0 +1,74 @@
+# -*- coding: utf-8 -*-
+
+db.define_table('delegacia',
+                Field('empresa','reference empresa', writable=False, readable=False, label='Empresa'),
+                Field('nome', 'string', label='Nome',default='',requires = IS_UPPER()),
+                Field('telefone', 'string', label='Telefone',default=''),
+                Field('cpf', 'string', label='CPF',default='',requires = IS_UPPER()),
+                Field('endereco', 'string', label='End Completo',default='',requires = IS_UPPER()),
+                Field('cidade', 'string', label='Cidade',default='',requires = IS_UPPER()),
+                Field('ativo', 'boolean', writable=True, readable=True, default=True),
+                auth.signature,
+                format='%(nome)s')
+
+db.delegacia.id.writable=False
+db.delegacia.id.readable=False
+
+db.define_table('associado',
+                Field('empresa','reference empresa', writable=False, readable=False, label='Empresa'),
+                Field('delegacia','reference delegacia', writable=False, readable=False, label='Delegacia'),
+                Field('nome', 'string', label='Nome',default='',requires = IS_UPPER()),
+                Field('telefone', 'string', label='Telefone',default=''),
+                Field('email', 'string', writable=False, readable=False, label='E-mail',default=''),
+                Field('cpf', 'string', label='CPF',default='',requires = IS_UPPER()),
+                Field('rg', 'string', label='RG',default='',requires = IS_UPPER()),
+                Field('endereco', 'string', label='End Completo',default='',requires = IS_UPPER()),
+                Field('bairro', 'string', label='Bairro',default='',requires = IS_UPPER()),
+                Field('complemento', 'string', label='Complemento',default='',requires = IS_UPPER()),
+                Field('cidade', 'string', label='Cidade',default='',requires = IS_UPPER()),
+                Field('ativo', 'boolean', writable=True, readable=True, default=True),
+                auth.signature,
+                format='%(nome)s')
+
+db.associado.id.writable=False
+db.associado.id.readable=False
+db.define_table('cliente',
+                Field('empresa','reference empresa', writable=False, readable=False, label='Empresa'),
+                Field('nome', 'string', label='Nome',default='',requires = IS_UPPER()),
+                Field('telefone', 'string', label='Telefone',default=''),
+                Field('cpf', 'string', label='CPF',default='',requires = IS_UPPER()),
+                Field('endereco', 'string', label='End Completo',default='',requires = IS_UPPER()),
+                Field('cidade', 'string', label='Cidade',default='',requires = IS_UPPER()),
+                Field('ativo', 'boolean', writable=True, readable=True, default=True),
+                auth.signature,
+                format='%(nome)s')
+
+db.cliente.id.writable=False
+db.cliente.id.readable=False
+
+db.define_table('classificacao',
+                Field('empresa','reference empresa', writable=False, readable=False, label='Empresa'),
+                Field('descricao', 'string', label='Descrição',default='',requires = IS_UPPER()),
+                Field('tipo', 'string', label='Tipo', writable=True, readable=True,default='Entrada'),
+                Field('ativo', 'boolean', writable=True, readable=True, default=True),
+                auth.signature,
+                format='%(descricao)s')
+
+db.classificacao.id.writable=False
+db.classificacao.id.readable=False
+db.classificacao.tipo.requires=IS_IN_SET(['Entrada', 'Saida'])
+
+db.define_table('registro_financeiro',
+                Field('empresa','reference empresa', writable=False, readable=False, label='Empresa'),
+                Field('associado','reference associado', writable=False, readable=False, label='Associado'),
+                Field('classificacao','reference classificacao', writable=False, readable=False, label='Classificacao'),
+                Field('data_vencimento', 'date', writable=True, readable=True, default=request.now, requires = IS_DATE(format=('%d-%m-%Y'))),
+                Field('descricao', 'string', label='Descrição',default='',requires = IS_UPPER()),
+                Field('valor', 'double', writable=True,  notnull=True, default=0),
+                Field('liquidado', 'boolean', writable=True, readable=True, default=False),
+                auth.signature,
+                format='%(descricao)s')
+
+db.registro_financeiro.id.writable=False
+db.registro_financeiro.id.readable=False
+db.registro_financeiro.valor.requires = IS_FLOAT_IN_RANGE(0, 100, dot=",", error_message='Verifique!')

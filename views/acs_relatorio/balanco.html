@@ -1,0 +1,82 @@
+{{extend 'layout.html'}}
+{{total=0}}
+{{crd=0}}
+{{deb=0}}
+<div class="py-5">
+    <div class="container">
+        <div class="bg-lightrounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4  text-center ">
+            <h6 class="mb-0">Balanço mês de {{=mes_referencia(int(primeiro.strftime('%m'))).title()}} </h6>
+            <ul class="pagination" id="noprint">
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[index-4])}}">
+                    <span>«</span> 4</a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[index-3])}}">3
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[index-2])}}">2
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[index-1])}}">1
+                </a> </li>
+            <li class="page-item active"> <a class="page-link" href="#">{{=primeiro.strftime('%m/%Y')}}</a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[index+1])}}">1
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[index+2])}}">2
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[index+3])}}">3
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[index+4])}}">4
+                    <span>»</span></a> </li>
+          </ul>
+        </div> 
+      <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+            <table class="table table-bordered ">
+              <thead class="">
+                <tr>
+                  <th>Descrição</th>
+                  <th>Credito</th>
+                  <th >Debito</th>
+                  <th >Saldo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{for row in rows:}}
+                <tr>
+                  <th>{{=row.descricao}}</th>
+                    {{valor=soma_registros_por_classificacao(row.id,index)}}
+                    {{if row.tipo=="Entrada":}}
+                    {{total+=valor}}
+{{crd+=valor}}
+                  <td class="text-right">{{=dinheiro(valor)}} C</td>
+                  <td class="text-right">-</td>
+                    {{else:}}
+                    {{total-=valor}}
+{{deb+=valor}}
+                  <td class="text-right">-</td>
+                  <td class="text-right">{{=dinheiro(valor)}} D</td>
+                    
+                    {{pass}}
+                  <td class="text-right">{{=dinheiro(total)}} </td>
+                </tr>
+                  {{pass}}
+                  <tr>
+                      <th></th>
+                      <th class="text-right">{{=dinheiro(crd)}}</th>
+                      <th class="text-right">{{=dinheiro(deb)}}</th>
+                      <th class="text-right">{{=dinheiro(total)}}</th>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

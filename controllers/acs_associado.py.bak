@@ -1,0 +1,280 @@
+# -*- coding: utf-8 -*-
+
+@auth.requires_login()
+def index():
+    # Busca o usuário e empresa relacionada
+    usuario = db.usuario_empresa(db.usuario_empresa.usuario == auth.user.id)
+    empresa = db.empresa(usuario.empresa)
+
+    # Redireciona para a página inicial se o usuário estiver inativo
+    if usuario.ativo == False:
+        redirect(URL('default', 'index'))
+
+    # Configurações de paginação e verificação dos parâmetros da URL
+    paginacao = empresa.paginacao
+    if len(request.args) == 0:
+        pagina = 1
+    else:
+        try:
+            pagina = int(request.args[0])
+        except ValueError:
+            redirect(URL(args=[1]))
+
+    # Lógica de cálculo de páginas e limites
+    if pagina <= 0:
+        pagina = 1
+    total = db((db.associado.empresa == empresa.id)).count()
+    paginas = total // paginacao
+    if total % paginacao:
+        paginas += 1
+    if total == 0:
+        paginas = 1
+    if pagina > paginas:
+        redirect(URL(args=[paginas]))
+
+    limites = (paginacao * (pagina - 1), (paginacao * pagina))
+
+    # Consulta os registros dos registros financeiros da empresa, incluindo filtro de pesquisa
+    registros = db((db.associado.empresa == empresa.id)).select(
+        limitby=limites, orderby=db.associado.id | db.associado.nome)
+    consul = request.args(1)
+    if consul:
+        registros = db((db.associado.empresa == empresa.id) & (
+            (db.associado.nome.contains(consul)) | (db.associado.nome.contains(consul)))).select(
+            limitby=limites, orderby=db.associado.nome)
+    # Retorna os dados para a visualização
+    return dict(rows=registros, pagina=pagina, paginas=paginas, total=total, empresa=empresa)
+
+@auth.requires_login()
+def cadastrar():
+    # Busca o usuário e empresa relacionada
+    usuario = db.usuario_empresa(db.usuario_empresa.usuario == auth.user.id)
+    empresa = db.empresa(usuario.empresa)
+
+    # Configurações da visualização e definição do título da página
+    response.view = 'generic.html'  # usa uma visualização genérica
+    request.function = 'Cadastro de registro'  # define o título da página
+
+    # Define o valor padrão da empresa no formulário e processa o formulário
+    db.associado.empresa.default = usuario.empresa
+    # Busca a primeira delegacia da empresa (se existir)
+    primeira_delegacia = db((db.delegacia.empresa == usuario.empresa) & (db.delegacia.ativo == True)).select(db.delegacia.id, orderby=db.delegacia.id, limitby=(0, 1)).first()
+
+    # Define o valor padrão da delegacia no formulário como a primeira delegacia encontrada
+    if primeira_delegacia:
+        db.associado.delegacia.default = primeira_delegacia.id
+    db.associado.delegacia.requires = IS_IN_DB(db((db.delegacia.empresa==usuario.empresa)&(db.delegacia.ativo==True)), 'delegacia.id', '%(nome)s')
+    db.associado.delegacia.writable=True
+    db.associado.delegacia.readable=True
+    form = SQLFORM(db.associado).process()
+    # Redireciona para a página principal após aceitar o formulário
+    if form.accepted:
+        redirect(URL('index'))
+    elif form.errors:
+        response.flash = 'Formulário não aceito'  # exibe uma mensagem de erro se o formulário não for aceito
+
+    # Retorna o formulário para a visualização
+    return dict(form=form)
+
+@auth.requires_login()
+def alterar():
+    # Busca o usuário e registro relacionado
+    usuario = db.usuario_empresa(db.usuario_empresa.usuario == auth.user.id)
+    associado = db.associado(request.args(0, cast=int))
+
+    if len(request.args) == 1:
+        pagina = 1
+    else:
+        pagina = int(request.args[1])
+
+    # Redireciona se o registro não pertencer à empresa do usuário
+    if associado.empresa != usuario.empresa:
+        redirect(URL('index'))
+    db.associado.delegacia.requires = IS_IN_DB(db((db.delegacia.empresa==usuario.empresa)&(db.delegacia.ativo==True)), 'delegacia.id', '%(nome)s')
+    db.associado.delegacia.writable=True
+    db.associado.delegacia.readable=True
+    # Configurações da visualização e definição do título da página
+    response.view = 'generic.html'  # usa uma visualização genérica
+    request.function = 'Alterar registro'  # define o título da página
+
+    # Cria e processa o formulário de alteração
+    form = SQLFORM(db.associado, request.args(0, cast=int), deletable=False)
+    if form.process().accepted:
+        redirect(URL('index', args=pagina))
+    elif form.errors:
+        response.flash = 'Formulário não aceito'  # exibe uma mensagem de erro se o formulário não for aceito
+
+    # Retorna o formulário para a visualização
+    return dict(form=form)
+
+@auth.requires_login()
+def contribuicoes():
+    # Busca o usuário e registro relacionado
+    usuario = db.usuario_empresa(db.usuario_empresa.usuario == auth.user.id)
+    associado = db.associado(request.args(0, cast=int))
+    empresa = db.empresa(usuario.empresa)
+    if associado.empresa!=usuario.empresa:
+        redirect(URL('index'))
+    # Configurações de paginação e verificação dos parâmetros da URL
+    paginacao = empresa.paginacao
+    if len(request.args) == 1:
+        pagina = 1
+    else:
+        try:
+            pagina = int(request.args[1])
+        except ValueError:
+            redirect(URL(args=[associado.id,1]))
+
+    # Lógica de cálculo de páginas e limites
+    if pagina <= 0:
+        pagina = 1
+    total = db((db.associado.associado == associado.id)).count()
+    paginas = total // paginacao
+    if total % paginacao:
+        paginas += 1
+    if total == 0:
+        paginas = 1
+    if pagina > paginas:
+        redirect(URL(args=[associado.id,paginas]))
+    limites = (paginacao * (pagina - 1), (paginacao * pagina))
+    # Consulta os registros dos registros financeiros da empresa, incluindo filtro de pesquisa
+    registros = db((db.registro_financeiro.associado == associado.id)).select(
+        limitby=limites, orderby=db.registro_financeiro.liquidado | db.registro_financeiro.data_vencimento)
+    # Retorna os dados para a visualização
+    return dict(rows=registros, pagina=pagina, paginas=paginas, total=total, associado=associado, tipo= associado.id)
+
+from datetime import timedelta
+
+@auth.requires_login()
+def cadastrar_varios():
+    usuario = db.usuario_empresa(db.usuario_empresa.usuario == auth.user.id)
+    associado = db.associado(request.args(0, cast=int))
+    empresa = db.empresa(usuario.empresa)
+    response.view = 'generic.html'  # usa uma visualização genérica
+    from datetime import datetime, timedelta
+
+# ...
+
+    # Em algum lugar do seu código, você pode definir o valor padrão da data
+    data_atual = datetime.now()
+    data_padrao = data_atual + timedelta(days=0)
+    if associado.empresa!=usuario.empresa:
+        redirect(URL('index'))
+    # Defina o formulário fictício
+    form = SQLFORM.factory(
+        Field('quantidade_parcelas', 'integer', requires=IS_INT_IN_RANGE(1, 36), default=12),
+        Field('primeira_data', 'date', default=data_padrao, requires = IS_DATE(format=('%d-%m-%Y'))),
+        Field('valor', 'double', requires=IS_FLOAT_IN_RANGE(0, 10000), default=50),
+    )
+
+    # Processa o formulário quando enviado
+    if form.process().accepted:
+        # Obtém os valores do formulário
+        quantidade_parcelas = form.vars.quantidade_parcelas
+        primeira_data = form.vars.primeira_data
+        valor = form.vars.valor
+
+        # Calcula a diferença de dias entre as parcelas
+        diferenca_dias = 30  # Altere conforme necessário
+        total_classes = db((db.classificacao.empresa==empresa.id)&(db.classificacao.descricao.contains("ensalidade"))).count()
+        if total_classes==0:
+            classificacao = db.classificacao.insert(
+                empresa=empresa.id,  # Substitua empresa_id pelo valor desejado
+                descricao='Mensalidade',  # Substitua pelo nome desejado
+                tipo='Entrada',  # Substitua pela descrição desejada
+                ativo=True  # Substitua pelo valor desejado
+            )
+        else:
+            classificacao = db((db.classificacao.empresa==empresa.id)&(db.classificacao.descricao.contains("ensalidade"))).select().first()
+        # Gera os registros financeiros em lote
+        nova_data_vencimento = (primeira_data)
+        if nova_data_vencimento.day > 28:
+            nova_data_vencimento = nova_data_vencimento.replace(day=28)
+        for i in range(quantidade_parcelas):
+            db.registro_financeiro.insert(
+                empresa=empresa.id,  # Substitua empresa_id pelo ID correto
+                associado=associado.id,  # Substitua associado_id pelo ID correto
+                classificacao=classificacao.id,  # Substitua classificacao_id pelo ID correto
+                data_vencimento=nova_data_vencimento,
+                descricao=f"Parcela de {mes_referencia(int(nova_data_vencimento.month))} de {associado.nome}",
+                valor=valor,
+                liquidado=False
+            )
+            
+            nova_data_vencimento = adicionar_um_mes(nova_data_vencimento)
+        redirect(URL('contribuicoes', args=[associado.id]))
+    return dict(form=form)
+
+
+@auth.requires_login()
+def deletar_registros_nao_liquidados():
+    associado_id = (request.args(0, cast=int))
+    # Obtém o associado
+    associado = db.associado(associado_id) or redirect(URL('index'))  # Redireciona para uma página de erro se o associado não existir
+
+    # Deleta os registros financeiros não liquidados associados ao associado
+    db((db.registro_financeiro.associado == associado.id) & (db.registro_financeiro.liquidado == False)).delete()
+
+    # Redireciona de volta à página do associado ou para onde for adequado
+    redirect(URL('contribuicoes', args=[associado.id]))
+
+    
+def alterar_contribuicao():
+    # Busca o usuário e registro relacionado
+    usuario = db.usuario_empresa(db.usuario_empresa.usuario == auth.user.id)
+    registro_financeiro = db.registro_financeiro(request.args(0, cast=int))
+    associado = db.associado(registro_financeiro.associado)
+    if len(request.args) == 1:
+        pagina = 1
+    else:
+        pagina = int(request.args[1])
+
+    # Redireciona se o registro não pertencer à empresa do usuário
+    if registro_financeiro.empresa != usuario.empresa:
+        redirect(URL('index'))
+    db.associado.delegacia.writable=True
+    db.associado.delegacia.readable=True
+    # Configurações da visualização e definição do título da página
+    response.view = 'generic.html'  # usa uma visualização genérica
+    request.function = 'Alterar registro'  # define o título da página
+
+    # Cria e processa o formulário de alteração
+    form = SQLFORM(db.registro_financeiro, request.args(0, cast=int), deletable=False)
+    if form.process().accepted:
+        redirect(URL('contribuicoes', args=[associado.id,pagina]))
+    elif form.errors:
+        response.flash = 'Formulário não aceito'  # exibe uma mensagem de erro se o formulário não for aceito
+
+    # Retorna o formulário para a visualização
+    return dict(form=form)
+    
+    
+    
+def liquidar():
+    # Busca o usuário e registro relacionado
+    usuario = db.usuario_empresa(db.usuario_empresa.usuario == auth.user.id)
+    registro_financeiro = db.registro_financeiro(request.args(0, cast=int))
+    associado = db.associado(registro_financeiro.associado)
+    if len(request.args) == 1:
+        pagina = 1
+    else:
+        pagina = int(request.args[1])
+
+    # Redireciona se o registro não pertencer à empresa do usuário
+    if registro_financeiro.empresa != usuario.empresa:
+        redirect(URL('index'))
+    db.associado.delegacia.writable=True
+    db.associado.delegacia.readable=True
+    # Configurações da visualização e definição do título da página
+    response.view = 'generic.html'  # usa uma visualização genérica
+    request.function = 'Alterar registro'  # define o título da página
+
+    # Cria e processa o formulário de alteração
+    if registro_financeiro.liquidado==True:
+        registro_financeiro.liquidado=False
+    else:
+        registro_financeiro.liquidado=True
+    registro_financeiro.update_record()
+
+    # Retorna o formulário para a visualização
+    return redirect(URL('contribuicoes', args=[associado.id,pagina]))

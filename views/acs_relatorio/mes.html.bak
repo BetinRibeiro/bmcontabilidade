@@ -1,0 +1,192 @@
+{{extend 'layout.html'}}
+{{total=0}}
+{{pendente=0}}
+{{liquidado=0}}
+
+<div class="row">
+    <div class="col-md-6 col-12">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 col-6">
+
+                    </div>
+                    <div class="col-md-6 col-6">
+
+                    </div>
+                </div>
+                </div>
+            <div class="col-md-6 d-flex justify-content-between align-items-center">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-12 d-flex justify-content-between align-items-center" id="noprint">
+
+        {{if False:}}
+            {{if paginas>0:}}
+            {{pass}}
+        {{pass}}
+    </div>
+</div>
+{{if True:}}
+<div class="row">
+    <div class="col-md-6">
+<!--         <h5 class="text-left my-2">Pagina {{=pagina}}/{{=paginas}}</h5> -->
+    </div>
+    <div class="col-md-6" id="noprint">
+
+    </div>
+</div>
+
+<!-- <div class="container-fluid pt-1 px-4"> -->
+    <div class="bg-light text-center rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h6 class="mb-0">Lista de {{=tipo.title()}} {{=primeiro.strftime('%d/%m')}} - {{=ultimo.strftime('%d/%m/%Y')}} </h6>
+            <ul class="pagination">
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[tipo,index-4])}}">
+                    <span>«</span> 4</a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[tipo,index-3])}}">3
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[tipo,index-2])}}">2
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[tipo,index-1])}}">1
+                </a> </li>
+            <li class="page-item active"> <a class="page-link" href="#">{{=primeiro.strftime('%m/%Y')}}</a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[tipo,index+1])}}">1
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[tipo,index+2])}}">2
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[tipo,index+3])}}">3
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[tipo,index+4])}}">4
+                    <span>»</span></a> </li>
+          </ul>
+        </div> 
+        <div class="d-flex align-items-center justify-content-between mb-4">
+    {{if True:}}
+            <a class="btn btn-success btn-sm" href="{{=URL('cadastrar')}}" >
+                <i class="fa fa-fw fa-plus"></i> Cadastrar
+            </a>
+            {{else:}}
+            
+<!--             <a class="btn btn-dark btn-sm disabled" href="{{=URL('cadastrar')}}" >
+                <i class="fa fa-fw fa-plus"></i> Cadastrar
+            </a> -->
+            {{pass}}
+            {{if paginas>1:}}
+            {{include 'paginacao.html'}}
+            {{pass}}
+        </div> 
+        <div class="table-responsive">
+            <table class="table text-start align-middle table-bordered table-hover mb-0">
+                <thead>
+                    <tr class="text-dark">
+<!--                         <th class="text-left" id="noprint" scope="col">Alterar</th> -->
+                        <th class="text-left" scope="col">Vencimento</th>
+                        <th class="text-left" scope="col">Classe</th>
+                        <th class="text-left" scope="col">Descrição</th>
+                        <th class="text-left" scope="col">Valor</th>
+                        <th class="text-left" scope="col">Liquidado</th>
+<!--                         <th class="text-left" scope="col">Função</th> -->
+<!--                         <th id="noprint"  class="text-right">Acessar</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {{for row in rows:}}
+                        <tr>
+<!--                             <td class="text-left" id="noprint" scope="row">
+                                <a class="btn btn-warning btn-sm" href="{{=URL('alterar', args=[row.id,pagina])}}" >
+                                    <i class="fa fa-fw fa-pencil-square "></i> 
+                                    Alterar 
+                                </a>
+                               
+                            </td> -->
+                            <td class="text-left">{{=row.data_vencimento.strftime('%d/%m')}}</td>
+                            <td class="text-left">{{=row.classificacao.descricao}}</td>
+                            <td class="text-left">{{=row.descricao}}</td>
+                            <td class="text-left">{{=dinheiro(row.valor)}}</td>
+{{total+=row.valor}}
+                            {{if row.liquidado:}}
+                            <td class="text-left">
+                                Liquidado
+                                {{liquidado+=row.valor}}
+                            </td>
+                            {{else:}}
+                            <td class="text-left text-danger">
+                                Aguardando
+                                {{pendente+=row.valor}}
+                            </td>
+                            {{pass}}
+<!--                             <td class="text-left">{{=row}}</td> -->
+<!--                             <td id="noprint" class="text-right">
+                                <a class="btn btn-info btn-sm" href="{{=URL('contribuicoes', args=row.id)}}" >
+                                    <i class="fa fa-fw fa-folder-open"></i> 
+                                    Acessar 
+                                </a>
+                            </td> -->
+                        </tr>
+                    {{pass}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+<!-- </div> -->
+{{if len(rows)>1000000:}}
+<div class="row">
+    <div class="col-md-6">
+        <h5 class="text-left my-2">Pagina {{=pagina}}/{{=paginas}}</h5>
+    </div>
+    <div class="col-md-6"  id="noprint">
+        {{if paginas>1:}}
+            {{include 'paginacao.html'}}
+        {{pass}}
+    </div>
+</div>
+{{pass}}
+{{pass}}
+<div class="row m-2">
+        <div class="col-md-3 border">
+          <div class="blockquote">
+            <p class="mb-0">{{=dinheiro(total)}}</p>
+            <div class="blockquote-footer">Total Geral</div>
+          </div>
+        </div>
+        <div class="col-md-3 border">
+          <div class="blockquote">
+            <p class="mb-0">{{=dinheiro(pendente)}}</p>
+            <div class="blockquote-footer">Total Pendente</div>
+          </div>
+        </div>
+        <div class="col-md-3 border">
+          <div class="blockquote">
+            <p class="mb-0">{{=dinheiro(liquidado)}}</p>
+            <div class="blockquote-footer">Total Liquidado</div>
+          </div>
+        </div>
+        <div class="col-md-3 border">
+          <div class="blockquote">
+            <p class="mb-0">{{=primeiro.strftime('%m/%Y')}}</p>
+            <div class="blockquote-footer">Mês de Referência</div>
+          </div>
+        </div>
+      </div>
+<script>
+    // Adicione o atributo "autofocus" ao campo de entrada
+    document.querySelector('#input').focus();
+    var inputElement = document.querySelector('input[name=busca]');
+
+    $(document).keypress(function(e) {
+    if(e.which == 13) {
+     var busca= inputElement.value;
+        window.location.href = "{{=URL(args=1)}}/"+busca
+    }
+});
+</script>

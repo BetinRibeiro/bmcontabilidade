@@ -1,0 +1,293 @@
+{{extend 'layout.html'}}
+<div class="py-2" >
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-12">
+          <div class="blockquote">
+            <p class="mb-0">Balanço Patrimônial</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-12 text-right">
+          <div class="blockquote">
+            <p class="mb-0">{{=empresa.nome}}</p>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-md-6 col-12">
+          <h5 class="">Ativos</h5>
+          <h6 class="">Ativo Circulante</h6>
+          <ul class="list-group pb-4">
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0">
+                  <b> Caixa e Bancos </b>
+                </h6>
+                <small class="text-muted" id="percento1">0,00</small>
+              </div> <p class="text-muted"><b> R$  <input  class="text-right" type="number" id="valor1"></b></p>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b> Aplicações Financeiras </b></h6> 
+                <small class="text-muted" id="percento2">0,00</small>
+              </div> <p class="text-muted" ><b> R$  <input class="text-right" type="number" id="valor2"> </b></p>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b> Valor à Receber </b></h6>
+                <small class="text-muted" id="percento3">0,00</small>
+              </div> <p class="text-muted" ><b> R$  <input  class="text-right" type="number" id="valor3"> </b></p>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b> Estoque de Mercadorias </b></h6>
+                <small class="text-muted" id="percento4">0,00</small>
+              </div> <p class="text-muted" ><b> R$  <input  class="text-right" type="number" id="valor4"> </b></p>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div class="text-success">
+                <h6 class="my-0"><b>Total</b></h6> <small>100,0%</small>
+              </div> <p class="text-success" id="resultado1"> R$ 0,00 </p>
+            </li>
+          </ul>
+<!--              -->
+          <h6 class="">Ativo Não Circulante</h6>
+          <ul class="list-group pb-4">
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b> Móveis e Ferramentas </b></h6> 
+                <small class="text-muted" id="percento5">0,00</small>
+              </div> <span class="text-muted"><b>  R$  <input class="text-right" type="number" id="valor5">  </b></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b> Veículos</b></h6> 
+                <small class="text-muted" id="percento6">0,00</small>
+              </div> <span class="text-muted"><b>  R$  <input class="text-right" type="number" id="valor6">  </b></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b> Outros Patromônios </b></h6> 
+                <small class="text-muted" id="percento7">0,00</small>
+              </div> <span class="text-muted"><b>  R$  <input class="text-right" type="number" id="valor7">  </b></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div class="text-success">
+                <h6 class="my-0"><b>Total</b></h6> 
+                  <small>100,0%</small>
+              </div> <p class="text-success" id="resultado2"> R$ 0,00 </p>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Ativo Total</span>
+              <b><p class="" id="ativo_total"> R$ 0,00 </p></b>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-6 col-12">
+          <h5 class="">Passivos</h5>
+          <h6 class="">Passivo Circulante</h6>
+          <ul class="list-group pb-4">
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b>Fornecedores</b></h6> 
+                <small class="text-muted" id="percento8">0,00</small>
+              </div> <span class="text-muted"><b>  R$  <input class="text-right" type="number" id="valor8">  </b></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b>Emprestimos</b></h6> 
+                <small class="text-muted" id="percento9">0,00</small>
+              </div> <span class="text-muted"><b>  R$  <input class="text-right" type="number" id="valor9">  </b></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b>Juros à Pagar</b></h6> 
+                <small class="text-muted" id="percento10">0,00</small>
+              </div> <span class="text-muted"><b>  R$  <input class="text-right" type="number" id="valor10">  </b></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b>Despesas à pagar</b></h6> 
+                <small class="text-muted" id="percento11">0,00</small>
+              </div> <span class="text-muted"><b>  R$  <input class="text-right" type="number" id="valor11">  </b></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div class="text-danger">
+                <h6 class="my-0"><b>Total</b></h6> <small>100,0%</small>
+              </div><b> <p class="text-danger"id="passivo_total"> R$ 0,00 </p></b>
+            </li>
+          </ul>
+          <h6 class="">Patrimônio Liquido</h6>
+          <ul class="list-group pb-4">
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b>Capital Social </b></h6> 
+                <small class="text-muted" id="r_capital_social">0,00</small>
+              </div> <span class="text-muted"><b>  R$  <input class="text-right" type="number" id="capital_social">  </b></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b>Lucros/Prej. Acumulados</b></h6> 
+                <small class="text-muted" id="r_lucro_acumulado">0,00</small>
+              </div> <span class="text-muted" id="lucprejacumulado"><b> R$ 0,00 </b></span>
+            </li>
+<!--             <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <h6 class="my-0"><b>Prejuizos Acumulados</b></h6> <small class="text-muted">0%</small>
+              </div> <span class="text-muted"><b>R$ 0,00</b></span>
+            </li> -->
+            <li class="list-group-item d-flex justify-content-between">
+              <div class="text-info">
+                <h6 class="my-0"><b>Total</b></h6>
+                  <small>100,0%</small>
+              </div> <span class="text-info"> R$ 0,00 </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between"> <span >Patrimônio Liquido</span> 
+                <b> <p class="text-danger"id="patrimonio_liquido"> R$ 0,00 </p> </b> </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+        function calcularSoma() {
+            const valor1 = parseFloat(document.getElementById('valor1').value) || 0;
+            const valor2 = parseFloat(document.getElementById('valor2').value) || 0;
+            const valor3 = parseFloat(document.getElementById('valor3').value) || 0;
+            const valor4 = parseFloat(document.getElementById('valor4').value) || 0;
+            const soma1 = valor1 + valor2 + valor3 + valor4;
+            document.getElementById('resultado1').textContent = 'R$ ' + soma1.toFixed(2);
+
+
+            if (valor1 > 0) {
+                const percentualValor1 = (valor1 / soma1) * 100;
+                document.getElementById('percento1').textContent = ' ' + percentualValor1.toFixed(1) + "%";
+            } else {
+                document.getElementById('percento1').textContent = ' 0,0%';
+            }
+
+            if (valor2 > 0) {
+                const percentualValor2 = (valor2 / soma1) * 100;
+                document.getElementById('percento2').textContent = ' ' + percentualValor2.toFixed(1) + "%";
+            } else {
+                document.getElementById('percento2').textContent = ' 0,0%';
+            }
+
+            if (valor3 > 0) {
+                const percentualValor3 = (valor3 / soma1) * 100;
+                document.getElementById('percento3').textContent = ' ' + percentualValor3.toFixed(1) + "%";
+            } else {
+                document.getElementById('percento3').textContent = ' 0,0%';
+            }
+
+            if (valor4 > 0) {
+                const percentualValor4 = (valor4 / soma1) * 100;
+                document.getElementById('percento4').textContent = ' ' + percentualValor4.toFixed(1) + "%";
+            } else {
+                document.getElementById('percento4').textContent = ' 0,0%';
+            }
+
+            const valor5 = parseFloat(document.getElementById('valor5').value) || 0;
+            const valor6 = parseFloat(document.getElementById('valor6').value) || 0;
+            const valor7 = parseFloat(document.getElementById('valor7').value) || 0;
+            const soma2 = valor5 + valor6 + valor7;
+            document.getElementById('resultado2').textContent = 'R$ ' + soma2.toFixed(2);
+
+            if (valor5 > 0) {
+                const percentualValor5 = (valor5 / soma2) * 100;
+                document.getElementById('percento5').textContent = ' ' + percentualValor5.toFixed(1) + "%";
+            } else {
+                document.getElementById('percento5').textContent = ' 0,0%';
+            }
+
+            if (valor6 > 0) {
+                const percentualValor6 = (valor6 / soma2) * 100;
+                document.getElementById('percento6').textContent = ' ' + percentualValor6.toFixed(1) + "%";
+            } else {
+                document.getElementById('percento6').textContent = ' 0,0%';
+            }
+
+            if (valor7 > 0) {
+                const percentualValor7 = (valor7 / soma2) * 100;
+                document.getElementById('percento7').textContent = ' ' + percentualValor7.toFixed(1) + "%";
+            } else {
+                document.getElementById('percento7').textContent = ' 0,0%';
+            }
+            const somaTotal = soma1 + soma2;
+            document.getElementById('ativo_total').textContent = 'R$ ' + somaTotal.toFixed(2);
+
+            const valor8 = parseFloat(document.getElementById('valor8').value) || 0;
+            const valor9 = parseFloat(document.getElementById('valor9').value) || 0;
+            const valor10 = parseFloat(document.getElementById('valor10').value) || 0;
+            const valor11 = parseFloat(document.getElementById('valor11').value) || 0;
+            const passivo_total = valor8 + valor9 + valor10 + valor11;
+            document.getElementById('passivo_total').textContent = 'R$ ' + passivo_total.toFixed(2);
+
+            if (valor8 > 0) {
+                const percentualValor8 = (valor8 / passivo_total) * 100;
+                document.getElementById('percento8').textContent = ' ' + percentualValor8.toFixed(1) + "%";
+            } else {
+                document.getElementById('percento8').textContent = ' 0,0%';
+            }
+
+            if (valor9 > 0) {
+                const percentualValor9 = (valor9 / passivo_total) * 100;
+                document.getElementById('percento9').textContent = ' ' + percentualValor9.toFixed(1) + "%";
+            } else {
+                document.getElementById('percento9').textContent = ' 0,0%';
+            }
+
+            if (valor10 > 0) {
+                const percentualValor10 = (valor10 / passivo_total) * 100;
+                document.getElementById('percento10').textContent = ' ' + percentualValor10.toFixed(1) + "%";
+            } else {
+                document.getElementById('percento10').textContent = ' 0,0%';
+            }
+
+            if (valor11 > 0) {
+                const percentualValor11 = (valor11 / passivo_total) * 100;
+                document.getElementById('percento11').textContent = ' ' + percentualValor11.toFixed(1) + "%";
+            } else {
+                document.getElementById('percento11').textContent = ' 0,0%';
+            }
+
+            const capital_social = parseFloat(document.getElementById('capital_social').value) || 0;
+            
+            const lucro_acumulado = somaTotal - passivo_total;
+            
+            const patrimonio_total = lucro_acumulado + capital_social;
+            
+            
+            if (capital_social > 0) {
+                const percentualValor12 = (capital_social / patrimonio_total) * 100;
+                document.getElementById('r_capital_social').textContent = ' ' + percentualValor12.toFixed(1) + "%";
+            } else {
+                document.getElementById('r_capital_social').textContent = ' 0,0%';
+            }
+            
+            if (lucro_acumulado > 0) {
+                const percentualValor13 = (lucro_acumulado / patrimonio_total) * 100;
+                document.getElementById('r_lucro_acumulado').textContent = ' ' + percentualValor13.toFixed(1) + "%";
+            } else {
+                document.getElementById('r_lucro_acumulado').textContent = ' 0,0%';
+            }
+            
+            document.getElementById('lucprejacumulado').textContent = 'R$ ' + lucro_acumulado.toFixed(2);
+            
+            document.getElementById('patrimonio_liquido').textContent = 'R$ ' + patrimonio_total.toFixed(2);
+            
+            
+            
+        }
+
+        // Chamando a função ao carregar a página
+        window.onload = function () {
+            // Adicionando um ouvinte de evento nos campos de entrada para calcular a soma
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => {
+                input.addEventListener('input', calcularSoma);
+            });
+        };
+    </script>

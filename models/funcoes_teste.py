@@ -79,3 +79,33 @@ def gerar_telefone_aleatorio():
 
 def gerar_cpf_aleatorio():
     return ''.join(random.choice(string.digits) for _ in range(11))
+
+
+
+
+import random
+
+
+def criar_registro_financeiro(id_classificacao, posicao=0):
+    classificacao = db.classificacao(id_classificacao)
+    empresa = db.empresa(classificacao.empresa)
+    primeiro, ultimo = primeiro_ultimo_dia_do_mes(posicao)
+
+    limite = int(ultimo.day)
+    
+    if classificacao:
+        for i in range(limite):
+            valor_aleatorio = random.uniform(1000, 10000)
+            descricao_aleatoria = "Gerado Automaticamente"
+            db.registro_financeiro.insert(
+                classificacao=id_classificacao,
+                empresa=empresa.id,
+                data_vencimento= primeiro,
+                descricao=descricao_aleatoria,
+                liquidado=True,
+                valor=valor_aleatorio
+            )
+            primeiro += timedelta(days=1)
+        return "Registro financeiro criado com sucesso."
+    else:
+        return "Classificação não encontrada."

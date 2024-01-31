@@ -6,7 +6,7 @@
     <div class="container">
         <div class="bg-lightrounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4  text-center ">
-            <h6 class="mb-0">Balanço mês de {{=mes_referencia(int(primeiro.strftime('%m'))).title()}} </h6>
+            <h3 class="mb-0">Balanço mês de {{=mes_referencia(int(primeiro.strftime('%m'))).title()}} </h3>
             <ul class="pagination" id="noprint">
             <li class="page-item"> 
                 <a class="page-link" href="{{=URL(args=[index-4])}}">
@@ -38,19 +38,19 @@
       <div class="row">
         <div class="col-md-12">
             <div class="table-responsive">
-            <table class="table table-bordered ">
+            <table class="table table-bordered table-sm">
               <thead class="">
                 <tr>
                   <th>Descrição</th>
-                  <th>Credito</th>
-                  <th >Debito</th>
-                  <th >Saldo</th>
+                  <th class="text-right">Crédito</th>
+                  <th  class="text-right">Débito</th>
+                  <th  class="text-right">Saldo</th>
                 </tr>
               </thead>
               <tbody>
                 {{for row in rows:}}
                 <tr>
-                  <th>{{=row.descricao}}</th>
+                  <th><a href="{{=URL('acs_classificacao','acessar',args=[row.id,index])}}">{{=row.descricao}}</a></th>
                     {{valor=soma_registros_por_classificacao(row.id,index)}}
                     {{if row.tipo=="Entrada":}}
                     {{total+=valor}}

@@ -65,10 +65,11 @@ db.define_table('registro_financeiro',
                 Field('data_vencimento', 'date', writable=True, readable=True, default=request.now, requires = IS_DATE(format=('%d-%m-%Y'))),
                 Field('descricao', 'string', label='Descrição',default='',requires = IS_UPPER()),
                 Field('valor', 'double', writable=True,  notnull=True, default=0),
-                Field('liquidado', 'boolean', writable=True, readable=True, default=False),
+                Field('liquidado', 'boolean', writable=True, readable=True, default=True),
                 auth.signature,
                 format='%(descricao)s')
 
 db.registro_financeiro.id.writable=False
 db.registro_financeiro.id.readable=False
-db.registro_financeiro.valor.requires = IS_FLOAT_IN_RANGE(0, 100, dot=",", error_message='Verifique!')
+# db.registro_financeiro.valor.requires = IS_FLOAT_IN_RANGE(1000, 100, dot=",", error_message='Verifique!')
+db.registro_financeiro.valor.requires = IS_FLOAT_IN_RANGE(dot=',', error_message='Verifique!', minimum=1, maximum=1000000)

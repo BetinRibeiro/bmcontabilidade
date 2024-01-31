@@ -59,7 +59,7 @@ def index():
 
     # Consulta os registros dos registros financeiros da empresa, incluindo filtro de pesquisa
     registros = db((db.classificacao.empresa == empresa.id)).select(
-        limitby=limites, orderby=db.classificacao.tipo | db.classificacao.descricao)
+        limitby=limites, orderby=~db.classificacao.ativo| db.classificacao.tipo | db.classificacao.descricao)
     consul = request.args(1)
     if consul:
         registros = db((db.classificacao.empresa == empresa.id) & (
@@ -167,3 +167,66 @@ def alterar():
 
     # Retorna o formulário para a visualização
     return dict(form=form)
+
+
+@auth.requires_login()
+def acessar():
+    usuario = db.usuario_empresa(db.usuario_empresa.usuario == auth.user.id)
+    classificacao = db.classificacao(request.args(0, cast=int))
+
+    empresa = db.empresa(usuario.empresa)
+    if classificacao.empresa!=usuario.empresa:
+        redirect(URL('index'))
+
+    if len(request.args) == 1:
+        index = 0
+    else:
+        try:
+            index = int(request.args[1])
+        except ValueError:
+            redirect(URL(args=[classificacao.id,0]))
+    primeiro_dia, ultimo_dia = primeiro_ultimo_dia_do_mes(index)
+
+    registros = db(
+            (db.registro_financeiro.classificacao==classificacao.id) &
+            (db.registro_financeiro.empresa == empresa.id) &
+            (db.registro_financeiro.data_vencimento >= primeiro_dia) &
+            (db.registro_financeiro.data_vencimento <= ultimo_dia)
+        ).select(orderby=db.registro_financeiro.data_vencimento)
+    return dict(rows=registros, classificacao=classificacao,primeiro_dia=primeiro_dia,ultimo_dia=ultimo_dia,index=index)
+    
+def alterar_registro():
+    # Busca o usuário e registro relacionado
+    usuario = db.usuario_empresa(db.usuario_empresa.usuario == auth.user.id)
+    registro_financeiro = db.registro_financeiro(request.args(0, cast=int))
+    classificacao = db.classificacao(registro_financeiro.classificacao)
+
+    if len(request.args) == 1:
+        index = 0
+    else:
+        index = int(request.args[1])
+
+    # Redireciona se o registro não pertencer à empresa do usuário
+    if registro_financeiro.empresa != usuario.empresa:
+        redirect(URL('index'))
+
+    # Configurações da visualização e definição do título da página
+    response.view = 'generic.html'  # usa uma visualização genérica
+    request.function = 'Alterar registro'  # define o título da página
+
+    # Cria e processa o formulário de alteração
+    form = SQLFORM(db.registro_financeiro, request.args(0, cast=int), deletable=False)
+    if form.process().accepted:
+        redirect(URL('acessar', args=[classificacao.id,index]))
+    elif form.errors:
+        response.flash = 'Formulário não aceito'  # exibe uma mensagem de erro se o formulário não for aceito
+
+    # Retorna o formulário para a visualização
+    return dict(form=form)
+
+
+def aleatorio_varios():
+    criar_registro_financeiro(request.args(0, cast=int), int(request.args[1]))
+    
+    
+    return redirect(URL('acessar', args=[request.args(0, cast=int),int(request.args[1])]))

@@ -38,40 +38,40 @@
       <div class="row">
         <div class="col-md-12">
             <div class="table-responsive">
-            <table class="table table-bordered ">
+            <table class="table table-bordered table-sm">
               <thead class="">
                 <tr>
                   <th>Descrição</th>
-                  <th>Credito</th>
-                  <th >Debito</th>
-                  <th >Saldo</th>
+                  <th class="text-right">Crédito</th>
+                  <th  class="text-right">Débito</th>
+                  <th  class="text-right">Saldo</th>
                 </tr>
               </thead>
               <tbody>
                 {{for row in rows:}}
                 <tr>
-                  <th>{{=row.descricao}}</th>
+                  <th><a href="{{=URL('acs_classificacao','acessar',args=[row.id,index])}}">{{=row.descricao}}</a></th>
                     {{valor=soma_registros_por_classificacao(row.id,index)}}
                     {{if row.tipo=="Entrada":}}
                     {{total+=valor}}
 {{crd+=valor}}
                   <td class="text-right">{{=dinheiro(valor)}} C</td>
-                  <td class="text-left">-</td>
+                  <td class="text-right">-</td>
                     {{else:}}
                     {{total-=valor}}
 {{deb+=valor}}
-                  <td class="text-left">-</td>
-                  <td class="text-left">{{=dinheiro(valor)}} D</td>
+                  <td class="text-right">-</td>
+                  <td class="text-right">{{=dinheiro(valor)}} D</td>
                     
                     {{pass}}
-                  <td class="text-left">{{=dinheiro(total)}} </td>
+                  <td class="text-right">{{=dinheiro(total)}} </td>
                 </tr>
                   {{pass}}
                   <tr>
                       <th></th>
-                      <th>{{=dinheiro(crd)}}</th>
-                      <th>{{=dinheiro(deb)}}</th>
-                      <th>{{=dinheiro(total)}}</th>
+                      <th class="text-right">{{=dinheiro(crd)}}</th>
+                      <th class="text-right">{{=dinheiro(deb)}}</th>
+                      <th class="text-right">{{=dinheiro(total)}}</th>
                   </tr>
               </tbody>
             </table>

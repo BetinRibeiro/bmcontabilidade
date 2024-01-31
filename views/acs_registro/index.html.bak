@@ -77,7 +77,11 @@
                 </thead>
                 <tbody>
                     {{for row in rows:}}
+                    {{if (row.liquidado):}}
                         <tr>
+                            {{else:}}
+                        <tr class="text-danger">
+                            {{pass}}
                             <td class="text-left" id="noprint" scope="row">
                                 <a class="btn btn-warning btn-sm" href="{{=URL('alterar', args=[row.id,pagina])}}" >
                                     <i class="fa fa-fw fa-pencil-square "></i> 
@@ -86,8 +90,15 @@
                                
                             </td>
                             <td class="text-left">{{=row.data_vencimento.strftime('%d/%m/%Y')}}</td>
-                            <td class="text-left">{{=row.classificacao.descricao}}</td>
-                            <td class="text-left">{{=row.descricao}}</td>
+                            <td class="text-left">
+                                <a class="" href="{{=URL('acessar', args=row.classificacao)}}" >
+                                    <i class="fa fa-fw fa-folder-open"></i> 
+                                    {{=row.classificacao.descricao}}
+                                </a>
+                                </td>
+                            <td class="text-left">
+                                    {{=row.descricao}} 
+                            </td>
                             <td class="text-left">{{=dinheiro(row.valor)}}</td>
                             <td class="text-left">{{if (row.liquidado):}}Quitado{{else:}}Aguardando{{pass}}</td>
 <!--                             <td id="noprint" class="text-right">

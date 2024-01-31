@@ -48,7 +48,7 @@
             </div>
         </div> 
         <div class="d-flex align-items-center justify-content-between mb-4">
-    {{if  total>=empresa.q_classes:}}
+    {{if not total>=empresa.q_classes:}}
             <a class="btn btn-success btn-sm" href="{{=URL('cadastrar')}}" >
                 <i class="fa fa-fw fa-plus"></i> Cadastrar
             </a>
@@ -69,13 +69,17 @@
                         <th class="text-left" id="noprint" scope="col">Alterar</th>
                         <th class="text-left" scope="col">Tipo</th>
                         <th class="text-left" scope="col">Descrição</th>
-<!--                         <th class="text-left" scope="col">Função</th> -->
-<!--                         <th id="noprint"  class="text-right">Acessar</th> -->
+                        <th class="text-left" scope="col">Status</th>
+                        <th id="noprint"  class="text-right">Acessar</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{for row in rows:}}
+                    {{if row.ativo:}}
                         <tr>
+                            {{else:}}
+                            <tr class="">
+                            {{pass}}
                             <td class="text-left" id="noprint" scope="row">
                                 <a class="btn btn-warning btn-sm" href="{{=URL('alterar', args=[row.id,pagina])}}" >
                                     <i class="fa fa-fw fa-pencil-square "></i> 
@@ -85,13 +89,20 @@
                             </td>
                             <td class="text-left">{{=row.tipo.upper()}}</td>
                             <td class="text-left">{{=row.descricao}}</td>
-<!--                             <td class="text-left">{{=row}}</td> -->
-<!--                             <td id="noprint" class="text-right">
-                                <a class="btn btn-info btn-sm disabled" href="{{=URL('acessar', args=row.id)}}" >
+                            <td class="text-left">
+                                {{if row.ativo:}}
+                                <i class="fa fa-check-square-o text-success" ></i>
+                                Ativo
+                                {{else:}}
+                                <i class="fa fa-window-close text-danger" ></i>
+                                Inativo
+                                {{pass}}</td>
+                            <td id="noprint" class="text-right">
+                                <a class="btn btn-info btn-sm" href="{{=URL('acessar', args=row.id)}}" >
                                     <i class="fa fa-fw fa-folder-open"></i> 
                                     Acessar 
                                 </a>
-                            </td> -->
+                            </td>
                         </tr>
                     {{pass}}
                 </tbody>

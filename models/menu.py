@@ -2,6 +2,7 @@
 
 
 lista_registros = [(T('Registros Geral'), False, URL('acs_registro', 'index'), []),
+            (T('Registros Sequencial'), False, URL('acs_registro', 'sequencial'), []),
             (T('Recebimentos Atrasados'), False, URL('acs_registro', 'atrasados', args=['entrada']), []),
             (T('Pagamentos Atrasados'), False, URL('acs_registro', 'atrasados', args=['saida']), []),
         ]
@@ -25,6 +26,7 @@ if auth.user:
         (T('Registros'), False, None, lista_registros ),
         (T('Agrupamentos'), False, None, lista_agrupamentos),
         (T('Relatório'), False, URL('acs_relatorio', 'balanco'), []),
+        (T('Manual'), False, URL('acs_manual', 'index'), [])
     ]
     if auth.user.id==14564654:
         response.menu += [
@@ -41,5 +43,5 @@ if auth.user:
 
 else:
     response.menu = [
-        (T('Home'), False, URL('default', 'index'), [])
+        (T('Manual'), False, URL('acs_manual', 'index'), [])
     ]

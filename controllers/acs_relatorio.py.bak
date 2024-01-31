@@ -180,4 +180,10 @@ def balanco():
     usuario = db.usuario_empresa(db.usuario_empresa.usuario == auth.user.id)
     empresa = db.empresa(usuario.empresa)
     rows = db(db.classificacao.empresa==empresa.id).select(orderby=db.classificacao.tipo)
+    if len(request.args) == 0:
+        index = 0
+    else:
+        index = int(request.args[0])
+
+    primeiro, ultimo = primeiro_ultimo_dia_do_mes(index)
     return locals()

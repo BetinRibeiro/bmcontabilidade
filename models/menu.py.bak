@@ -24,6 +24,8 @@ if auth.user:
 #         (T('Associados'), False, URL('acs_associado', 'index'), []),
         (T('Registros'), False, None, lista_registros ),
         (T('Agrupamentos'), False, None, lista_agrupamentos),
+        (T('Relatório'), False, URL('acs_relatorio', 'balanco'), []),
+        (T('Manual'), False, URL('acs_manual', 'index'), [])
     ]
     if auth.user.id==14564654:
         response.menu += [
@@ -40,5 +42,5 @@ if auth.user:
 
 else:
     response.menu = [
-        (T('Home'), False, URL('default', 'index'), [])
+        (T('Manual'), False, URL('acs_manual', 'index'), [])
     ]

@@ -1,0 +1,136 @@
+{{extend 'layout.html'}}
+<div class="row">
+    <div class="col-md-6 col-12">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 col-6">
+
+                    </div>
+                    <div class="col-md-6 col-6">
+
+                    </div>
+                </div>
+                </div>
+            <div class="col-md-6 d-flex justify-content-between align-items-center">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-12 d-flex justify-content-between align-items-center" id="noprint">
+
+    </div>
+</div>
+{{if True:}}
+<div class="row">
+    <div class="col-md-6">
+    </div>
+    <div class="col-md-6" id="noprint">
+ 
+    </div>
+</div>
+
+<!-- <div class="container-fluid pt-1 px-4"> -->
+    <div class="bg-light text-center rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h3 class="mb-0">{{=classificacao.tipo.upper()}}S/{{=classificacao.descricao}} {{=primeiro_dia.strftime('%d/%m')}}-{{=ultimo_dia.strftime('%d/%m/%Y')}}</h3>
+            <div class="form-group row m-1" id="noprint">
+                <ul class="pagination">
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[classificacao.id,index-4])}}">
+                    <span>«</span> -4</a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[classificacao.id,index-3])}}">-3
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[classificacao.id,index-2])}}">-2
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[classificacao.id,index-1])}}">-1
+                </a> </li>
+            <li class="page-item active"> <a class="page-link" href="#">{{=primeiro_dia.strftime('%m/%Y')}}</a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[classificacao.id,index+1])}}">+1
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[classificacao.id,index+2])}}">+2
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[classificacao.id,index+3])}}">+3
+                </a> </li>
+            <li class="page-item"> 
+                <a class="page-link" href="{{=URL(args=[classificacao.id,index+4])}}">+4
+                    <span>»</span></a> </li>
+          </ul>
+            </div>
+        </div> 
+        <div class="d-flex align-items-center justify-content-between mb-4">
+    {{if auth.user.id==1:}}
+            
+            <a class="btn btn-dark btn-sm " href="{{=URL('aleatorio_varios', args=[classificacao.id,index])}}" >
+                <i class="fa fa-fw fa-list"></i> Inserir Aleatorio Varios
+            </a>
+            {{pass}}
+            
+            <a class="btn btn-info btn-sm " href="{{=URL('acs_relatorio','balanco', args=[index])}}" >
+                <i class="fa fa-fw fa-list-ul"></i> Balanço/Mês
+            </a>
+        </div> 
+        <div class="table-responsive">
+            <table class="table text-start align-middle table-bordered table-hover mb-0">
+                <thead>
+                    <tr class="text-dark">
+                        <th class="text-left" id="noprint" scope="col">Alterar</th>
+                        <th class="text-left" scope="col">Data</th>
+                        <th class="text-left" scope="col">Classe</th>
+                        <th class="text-left" scope="col">Descrição</th>
+                        <th class="text-left" scope="col">Valor</th>
+                        <th class="text-left" scope="col">Status</th>
+<!--                         <th id="noprint"  class="text-right">Acessar</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {{for row in rows:}}
+                    {{if (row.liquidado):}}
+                        <tr>
+                            {{else:}}
+                        <tr class="text-danger">
+                            {{pass}}
+                            <td class="text-left" id="noprint" scope="row">
+                                <a class="btn btn-warning btn-sm" href="{{=URL('alterar_registro', args=[row.id, index])}}" >
+                                    <i class="fa fa-fw fa-pencil-square "></i> 
+                                    Alterar 
+                                </a>
+                               
+                            </td>
+                            <td class="text-left">{{=row.data_vencimento.strftime('%d/%m/%Y')}}</td>
+                            <td class="text-left">{{=row.classificacao.descricao}}</td>
+                            <td class="text-left">{{=row.descricao}}</td>
+                            <td class="text-left">{{=dinheiro(row.valor)}}</td>
+                            <td class="text-left">{{if (row.liquidado):}}Quitado{{else:}}Aguardando{{pass}}</td>
+<!--                             <td id="noprint" class="text-right">
+                                <a class="btn btn-info btn-sm disabled" href="{{=URL('acessar', args=row.id)}}" >
+                                    <i class="fa fa-fw fa-folder-open"></i> 
+                                    Acessar 
+                                </a>
+                            </td> -->
+                        </tr>
+                    {{pass}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+<!-- </div> -->
+{{pass}}
+
+<script>
+    // Adicione o atributo "autofocus" ao campo de entrada
+    document.querySelector('#input').focus();
+    var inputElement = document.querySelector('input[name=busca]');
+
+    $(document).keypress(function(e) {
+    if(e.which == 13) {
+     var busca= inputElement.value;
+        window.location.href = "{{=URL(args=1)}}/"+busca
+    }
+});
+</script>

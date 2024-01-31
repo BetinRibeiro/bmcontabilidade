@@ -130,7 +130,8 @@ def mes():
         ).select(
             orderby=db.registro_financeiro.data_vencimento
         )
-
+    else:
+        rows= []
     pagina=1
     paginas=1
     total=db(
